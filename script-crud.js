@@ -5,6 +5,11 @@ const ulTareas = document.querySelector(".app__section-task-list")
 
 const tareas = JSON.parse(localStorage.getItem("tareas")) || []
 console.log(tareas)
+
+function actualizarTareas() {
+    localStorage.setItem("tareas", JSON.stringify(tareas))
+}
+
 function crearElementoTarea(tarea) {
     const li = document.createElement("li")
     li.classList.add("app__section-task-list-item")
@@ -22,6 +27,20 @@ function crearElementoTarea(tarea) {
 
     const btn = document.createElement("button")
     btn.classList.add("app_button-edit")
+
+    btn.addEventListener("click", () => {
+        //debugg --> Debuggear Depurar
+        //debugger
+        const nuevaDescripcion = prompt("¿Cuál es la nueva tarea?")
+        console.log(nuevaDescripcion)
+        //null , "", undefined
+        if (nuevaDescripcion) {
+            parrafoDesc.innerText = nuevaDescripcion
+            tarea.descripcion = nuevaDescripcion
+            actualizarTareas()
+        }
+
+    })
 
     const img = document.createElement("img")
     img.src = "/imagenes/edit.png"
@@ -58,7 +77,7 @@ formAgregarTarea.addEventListener("submit", function (evento) {
     // stringify - Conventir un parametro a string
     // parse     - Convertir un string a un array/obj
 
-    localStorage.setItem("tareas", JSON.stringify(tareas))
+    actualizarTareas()
 
     textarea.value = ""
 
