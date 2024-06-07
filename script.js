@@ -16,13 +16,13 @@ const audioPlay = new Audio('./sonidos/play.wav');
 const audioPausa = new Audio('./sonidos/pause.mp3');
 const audioTiempoFinalizado = new Audio('./sonidos/beep.mp3');
 
-let tiempoTranscurridoEnSegundos = 1500;
+let tiempoTranscurridoEnSegundos = 5;
 let idIntervalo = null;
 
 musica.loop = true;
 
 inputMusicaEnfoque.addEventListener('change', () => {
-    if(musica.paused) {
+    if (musica.paused) {
         musica.play();
     } else {
         musica.pause();
@@ -49,7 +49,7 @@ botonLargo.addEventListener('click', () => {
 
 function cambiarContexto(contexto) {
     mostrarTiempo();
-    botones.forEach(function (botonContexto){
+    botones.forEach(function (botonContexto) {
         botonContexto.classList.remove('active');
     });
     html.setAttribute('data-contexto', contexto);
@@ -77,9 +77,15 @@ function cambiarContexto(contexto) {
 }
 
 const cuentaRegresiva = () => {
-    if(tiempoTranscurridoEnSegundos <= 0){
+    if (tiempoTranscurridoEnSegundos <= 0) {
         audioTiempoFinalizado.play();
         alert('¡Tiempo finalizado!');
+        const enfoqueActivo = html.getAttribute("data-contexto") == "enfoque"
+        if (enfoqueActivo) {
+            //Broadcast event 
+            const evento = new CustomEvent("EnfoqueFinalizado")
+            document.dispatchEvent(evento)
+        }
         reiniciar();
         return;
     }
@@ -90,7 +96,7 @@ const cuentaRegresiva = () => {
 botonIniciarPausar.addEventListener('click', iniciarOpausar);
 
 function iniciarOpausar() {
-    if(idIntervalo){
+    if (idIntervalo) {
         audioPausa.play();
         reiniciar();
         return;
@@ -102,7 +108,7 @@ function iniciarOpausar() {
 }
 
 function reiniciar() {
-    clearInterval(idIntervalo); 
+    clearInterval(idIntervalo);
     textoIniciarPausar.textContent = "Comenzar";
     iconoIniciarPausar.setAttribute('src', `/imagenes/play_arrow.png`);
     idIntervalo = null;
@@ -110,7 +116,7 @@ function reiniciar() {
 
 function mostrarTiempo() {
     const tiempo = new Date(tiempoTranscurridoEnSegundos * 1000);
-    const tiempoFormateado = tiempo.toLocaleTimeString('es-ES', {minute: '2-digit', second: '2-digit'});
+    const tiempoFormateado = tiempo.toLocaleTimeString('es-ES', { minute: '2-digit', second: '2-digit' });
     tiempoEnPantalla.innerHTML = `${tiempoFormateado}`;
 }
 

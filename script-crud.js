@@ -2,8 +2,11 @@ const btnAgregarTarea = document.querySelector(".app__button--add-task")
 const formAgregarTarea = document.querySelector(".app__form-add-task")
 const textarea = document.querySelector(".app__form-textarea")
 const ulTareas = document.querySelector(".app__section-task-list")
+const pDescTarea = document.querySelector(".app__section-active-task-description")
 
 const tareas = JSON.parse(localStorage.getItem("tareas")) || []
+let tareaSeleccionada = null
+let liTareaSeleccionada = null
 console.log(tareas)
 
 function actualizarTareas() {
@@ -52,6 +55,27 @@ function crearElementoTarea(tarea) {
 
     li.appendChild(btn)
 
+    li.onclick = () => {
+
+        const elementos = document.querySelectorAll(".app__section-task-list-item-active")
+        elementos.forEach((elemento) => {
+            elemento.classList.remove("app__section-task-list-item-active")
+        })
+
+        if (tareaSeleccionada == tarea) {
+            pDescTarea.textContent = ""
+            tareaSeleccionada = null
+            liTareaSeleccionada = null
+            //early return
+            return
+        }
+
+        tareaSeleccionada = tarea
+        liTareaSeleccionada = li
+        pDescTarea.textContent = tarea.descripcion
+        li.classList.add("app__section-task-list-item-active")
+    }
+
     return li
 }
 
@@ -89,4 +113,13 @@ formAgregarTarea.addEventListener("submit", function (evento) {
 tareas.forEach((tarea) => {
     const elementoTarea = crearElementoTarea(tarea)
     ulTareas.appendChild(elementoTarea)
+})
+
+
+document.addEventListener("EnfoqueFinalizado", () => {
+    if (tareaSeleccionada && liTareaSeleccionada) {
+        liTareaSeleccionada.classList.add("app__section-task-list-item-complete")
+        liTareaSeleccionada.classList.remove("app__section-task-list-item-active")
+        liTareaSeleccionada.querySelector("button").setAttribute("disabled", "disabled")
+    }
 })
